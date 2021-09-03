@@ -28,7 +28,10 @@ const userSchema = new Schema({
 		required: true,
 		trim: true,
 	},
-	tokenAuth: String,
+	tokenAuth: {
+		type: String,
+		default: '',
+	},
 });
 
 module.exports = mongoose.model('user', userSchema);

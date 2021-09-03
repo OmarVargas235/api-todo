@@ -3,36 +3,22 @@ const jwt = require('jsonwebtoken');
 
 module.exports.verifyToken = async (req, res, next) => {
 	
-	const userBD = req.header('x-token')
-				 ? await User.findOne({ tokenAuth: req.header('x-token') })
-				 : await User.findOne({ tokenURL: req.params.token });
+	const { token } = req.body;
+	const userBD = await User.findOne({ tokenAuth: token });
 
 	try {
 		
-		const token = req.header('x-token') ? userBD.tokenAuth : userBD.tokenURL;
+		const token = userBD.tokenAuth;
 
 		// Verifica si el token esta vencido
-		jwt.verify(token, process.env.SEED);
-		req.tokenExpired = true;
-		next();
+		const isExpired = jwt.verify(token, process.env.SEED);
+		req.url !== '/expired-token' && next();
 
-	} catch {
-		
-		req.tokenExpired = false;
-		next();
-	}
-}
+	} catch(err) {
 
-module.exports.auth = async (req, res, next) => {
-	
-	if (!req.tokenExpired) {
-		
-		return res.status(404).json({
+		res.status(404).json({
 			ok: false,
-			isExpiredToken: true,
 			messages: ['El token ya a expirado'],
 		});
 	}
-
-	next();
 }

@@ -2,7 +2,7 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const { generarJWT } = require('../helper/jwt');
 
-module.exports.loginUser = async (req, res, next) => {
+module.exports.loginUser = async (req, res) => {
 
 	const { email, password } = req.body;
 	
@@ -13,27 +13,13 @@ module.exports.loginUser = async (req, res, next) => {
 		// Comprobando si el usuario existe
 		if (userBD) {
 
-			// Comprobando si la cuenta esta activada
-			if (!userBD.activeAccount) {
-
-				return res.status(404).json({
-					ok: false,
-					messages: ['Debe de activar su cuenta, por favor, verifique la bandeja de entrada de su correo'],
-				});
-			}
-
 			// Validar el password
 			const validatePassword = await bcrypt.compare(password, userBD.password);
 
 			if (validatePassword) {
-
-				if (userBD.ban) return res.status(200).json({
-					ok: false,
-					messages: ['Este usuario a sido baneado, por incumplimientos de las normas'],
-				});
 				
 				// Generera token
-				const token = await generarJWT({id: userBD._id, name: userBD.name, email: userBD.email, lastName: userBD.lastName});
+				const token = await generarJWT({id: userBD['_id'], name: userBD.name, email: userBD.email, lastName: userBD.lastName});
 				
 				// Guarda el token generado en la base de datos
 				userBD.tokenAuth = token;
@@ -79,9 +65,8 @@ module.exports.logoutUser = async (req, res) => {
 
 	try {
 		
-		const { id } = req.body;
-
-		const userBD = await User.findById(id);
+		const { token } = req.body;
+		const userBD = await User.findOne({ tokenAuth: token });
 
 		userBD.tokenAuth = '';
 		await userBD.save();
@@ -91,7 +76,9 @@ module.exports.logoutUser = async (req, res) => {
 			messages: ['Se cerrado sesion correctamente'],
 		});
 
-	} catch {
+	} catch(err) {
+
+		console.log('logoutUser', err);
 		
 		return res.status(500).json({
 			ok: false,
