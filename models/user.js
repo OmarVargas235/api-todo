@@ -28,9 +28,7 @@ const userSchema = new Schema({
 		required: true,
 		trim: true,
 	},
-	activeAccount: Boolean,
 	tokenAuth: String,
-	tokenURL: String,
 });
 
 module.exports = mongoose.model('user', userSchema);
