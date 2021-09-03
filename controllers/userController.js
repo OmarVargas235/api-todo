@@ -41,27 +41,23 @@ module.exports.createUser = async (req, res) => {
 // =====================================
 // Obtener el usuario
 // =====================================
-// module.exports.getUser = async (req, res) => {
+module.exports.getUser = async (req, res) => {
 
-// 	try {
+	try {
 		
-// 		const token = req.header('x-token');
-// 		const userBD = await User.findOne({ tokenAuth: token }, 'socialMedias name lastName email img recordsChat sales description role');
-
-// 		const user = {...userBD['_doc']};
-// 		const { _id:uid, ...rest } = user;
-// 		rest.uid = uid;
+		const { token } = req.body;
+		const userBD = await User.findOne({ tokenAuth: token }, 'name lastName');
 			
-// 		return res.status(200).json({
-// 			ok: true,
-// 			messages: rest,
-// 		});
+		return res.status(200).json({
+			ok: true,
+			messages: userBD,
+		});
 
-// 	} catch {
+	} catch {
 		
-// 		return res.status(500).json({
-// 			ok: false,
-// 			messages: ['Ah ocurrido un error'],
-// 		});
-// 	}
-// }
+		return res.status(500).json({
+			ok: false,
+			messages: ['Ah ocurrido un error'],
+		});
+	}
+}
