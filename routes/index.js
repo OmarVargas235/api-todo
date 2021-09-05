@@ -13,6 +13,9 @@ module.exports = () => {
 	// Registro de usuarios
 	router.post('/create-user', validateFormRegister, userController.createUser);
 
+	// Obtener usuario
+	router.post('/get-user', verifyToken, userController.getUser);
+
 	// Autenticar usuario
 	router.post('/login-user', validateFormLogin, authController.loginUser);
 

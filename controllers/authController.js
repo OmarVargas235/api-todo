@@ -73,7 +73,7 @@ module.exports.logoutUser = async (req, res) => {
 
 		return res.status(200).json({
 			ok: true,
-			messages: ['Se cerrado sesion correctamente'],
+			messages: ['Se a cerrado sesion correctamente'],
 		});
 
 	} catch(err) {

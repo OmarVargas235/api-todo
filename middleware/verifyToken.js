@@ -16,6 +16,8 @@ module.exports.verifyToken = async (req, res, next) => {
 
 	} catch(err) {
 
+		console.log('token!!!!!!!!!!!', err);
+
 		res.status(404).json({
 			ok: false,
 			messages: ['El token ya a expirado'],
